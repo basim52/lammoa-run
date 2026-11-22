@@ -1,0 +1,24 @@
+{
+  "name": "lammoa-run",
+  "version": "1.0.0",
+  "description": "لمّوعة تركض — لعبة فرفشة",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "voice": "node scripts/gen-voice.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "msedge-tts": "^2.1.1",
+    "puppeteer-core": "^25.18.1",
+    "vite": "^6.4.6"
+  }
+}

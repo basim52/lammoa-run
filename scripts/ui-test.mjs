@@ -1,0 +1,24 @@
+import puppeteer from 'puppeteer-core';
+const URL = process.argv[2];
+const b = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const p = await b.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+await p.setViewport({ width: 412, height: 915, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+const r = await p.goto(URL, { waitUntil: 'networkidle0' }); console.log('status', r.status());
+const s = ms => new Promise(r => setTimeout(r, ms));
+await p.tap('.mcard'); await s(1500);
+console.log('intro visible', await p.$eval('#intro', e => !e.classList.contains('hidden')), await p.$eval('#inLine', e => e.textContent));
+await p.screenshot({ path: '/workspace/lammoa-run-shots/portrait-intro.png' });
+await p.tap('#goBtn'); await s(3500);
+// سحب بالإصبع لليمين ثم لفوق
+const sw = async (x1, y1, x2, y2) => { await p.touchscreen.touchStart(x1, y1); await p.touchscreen.touchMove((x1 + x2) / 2, (y1 + y2) / 2); await p.touchscreen.touchMove(x2, y2); await p.touchscreen.touchEnd(); };
+const lane0 = await p.evaluate(() => window.lammoa.G.lane);
+await sw(150, 600, 300, 600); await s(200);
+const lane1 = await p.evaluate(() => window.lammoa.G.lane);
+await sw(200, 650, 200, 450); await s(120);
+const y = await p.evaluate(() => window.lammoa.G.y);
+console.log('swipe lane', lane0, '->', lane1, 'jump y', y.toFixed(2), 'state', await p.evaluate(() => window.lammoa.state));
+await s(3000); await p.screenshot({ path: '/workspace/lammoa-run-shots/portrait-play.png' });
+await p.tap('#recBtn'); await s(500); console.log('rec sheet', await p.$eval('#recSheet', e => !e.classList.contains('hidden')));
+await p.screenshot({ path: '/workspace/lammoa-run-shots/portrait-rec-sheet.png' });
+console.log('errors', errs);
+await b.close();
